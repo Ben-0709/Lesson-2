@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BrawlNet — Fighting Game</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<!-- ████  MAIN MENU  ████ -->
+<div id="screen-menu" class="screen active">
+  <canvas id="menu-bg"></canvas>
+  <div class="menu-overlay">
+    <header class="menu-header">
+      <h1 class="logo">BRAWL<span>NET</span></h1>
+      <p class="logo-sub">The Ultimate Local Fighter</p>
+    </header>
+
+    <nav class="menu-modes">
+      <button class="mode-btn accent" id="btn-training">
+        <span class="mode-icon">🥊</span>
+        <span class="mode-body">
+          <span class="mode-title">TRAINING</span>
+          <span class="mode-desc">Battle AI — Easy, Normal or Hard</span>
+        </span>
+        <span class="mode-arrow">›</span>
+      </button>
+      <button class="mode-btn" id="btn-demo">
+        <span class="mode-icon">⚡</span>
+        <span class="mode-body">
+          <span class="mode-title">DEMO FIGHT</span>
+          <span class="mode-desc">Watch two AI fighters go at it</span>
+        </span>
+        <span class="mode-arrow">›</span>
+      </button>
+      <button class="mode-btn dim" id="btn-multiplayer">
+        <span class="mode-icon">🌐</span>
+        <span class="mode-body">
+          <span class="mode-title">MULTIPLAYER</span>
+          <span class="mode-desc">Requires Node.js server — see instructions below</span>
+        </span>
+        <span class="mode-arrow">›</span>
+      </button>
+    </nav>
+
+    <div class="server-info-box" id="server-info-box">
+      <p class="sib-title">⚠ Multiplayer Setup</p>
+      <p class="sib-step">1. Install <strong>Node.js</strong> from <strong>nodejs.org</strong> (click LTS)</p>
+      <p class="sib-step">2. Double-click <strong>START-GAME.bat</strong> in the game folder</p>
+      <p class="sib-step">3. Come back here — Multiplayer will light up automatically</p>
+      <p class="sib-note">Training &amp; Demo work right now — no setup needed!</p>
+    </div>
+  </div>
+</div>
+
+<!-- ████  CHARACTER SELECT  ████ -->
+<div id="screen-char" class="screen">
+  <div class="char-bg-glow"></div>
+  <div class="char-wrap">
+    <h2 class="screen-title">CHOOSE YOUR FIGHTER</h2>
+    <div class="char-cards" id="char-cards"></div>
+    <div class="char-bottom">
+      <div class="cust-group">
+        <label class="cust-label">FIGHTER NAME</label>
+        <input id="char-name" class="name-input" type="text"
+               placeholder="Your name…" maxlength="16" autocomplete="off"/>
+      </div>
+      <div class="cust-group">
+        <label class="cust-label">COLOR</label>
+        <div id="color-palette" class="color-palette"></div>
+      </div>
+    </div>
+    <div class="char-actions">
+      <button class="btn-ghost" id="char-back">← BACK</button>
+      <button class="btn-primary-lg" id="char-continue">READY →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ████  DIFFICULTY SELECT  ████ -->
+<div id="screen-diff" class="screen">
+  <div class="diff-wrap">
+    <h2 class="screen-title">SELECT DIFFICULTY</h2>
+    <p class="screen-sub">How hard should the AI fight?</p>
+    <div class="diff-cards">
+      <button class="diff-card" data-diff="easy">
+        <div class="diff-pip easy"></div>
+        <h3>EASY</h3>
+        <p>Slow reactions, random movement. Great for learning the basics.</p>
+        <ul><li>Low reaction speed</li><li>Random patterns</li><li>Rarely attacks</li></ul>
+      </button>
+      <button class="diff-card" data-diff="normal">
+        <div class="diff-pip normal"></div>
+        <h3>NORMAL</h3>
+        <p>Tracks and chases. Will attack when in range. A fair challenge.</p>
+        <ul><li>Moderate reactions</li><li>Pursues target</li><li>Occasional jumps</li></ul>
+      </button>
+      <button class="diff-card" data-diff="hard">
+        <div class="diff-pip hard"></div>
+        <h3>HARD</h3>
+        <p>Dodges attacks, applies pressure, relentless combos. Brutal.</p>
+        <ul><li>Fast reflexes</li><li>Reads &amp; counters</li><li>Corner pressure</li></ul>
+      </button>
+    </div>
+    <button class="btn-ghost" id="diff-back">← BACK</button>
+  </div>
+</div>
+
+<!-- ████  MULTIPLAYER LOBBY  ████ -->
+<div id="screen-lobby" class="screen">
+  <div class="lobby-bg">
+    <div class="orb orb-a"></div><div class="orb orb-b"></div><div class="orb orb-c"></div>
+  </div>
+  <div class="lobby-wrap">
+    <div class="lobby-top">
+      <button class="btn-ghost-sm" id="lobby-back">← MENU</button>
+      <h2 class="lobby-title">MULTIPLAYER</h2>
+    </div>
+    <div class="net-card">
+      <span class="net-card-icon">📡</span>
+      <div>
+        <p class="net-card-label">Share this address with players on the same WiFi</p>
+        <p class="net-card-addr" id="net-addr">Connecting to server…</p>
+        <p class="net-card-hint">Everyone opens this URL in their browser</p>
+      </div>
+    </div>
+    <div class="players-panel">
+      <div class="panel-header">
+        <span class="panel-title">Fighters Ready</span>
+        <span class="panel-count" id="panel-count">0 / 8</span>
+      </div>
+      <div id="player-slots" class="player-slots">
+        <p class="empty-hint">Waiting for players…</p>
+      </div>
+    </div>
+    <button id="btn-start" class="btn-start" disabled>Need at least 2 players to start</button>
+    <div class="controls-ref">
+      <div class="ctrl"><kbd>← → / A D</kbd> Move</div>
+      <div class="ctrl"><kbd>↑ / W / Space</kbd> Jump</div>
+      <div class="ctrl"><kbd>Z / J</kbd> Attack</div>
+    </div>
+  </div>
+</div>
+
+<!-- ████  GAME CANVAS  ████ -->
+<div id="screen-game" class="screen">
+  <canvas id="c" width="1200" height="600"></canvas>
+  <div id="mode-ribbon" class="mode-ribbon hidden"></div>
+  <button id="btn-exit" class="btn-exit hidden">✕ EXIT</button>
+  <div id="overlay-msg" class="overlay-msg hidden"><span id="overlay-text"></span></div>
+  <div id="overlay-end" class="overlay-end hidden">
+    <div class="end-box">
+      <h2 id="end-title">Round Over</h2>
+      <div id="end-scores"></div>
+      <p id="end-hint" class="end-hint">Next round starting…</p>
+    </div>
+  </div>
+</div>
+
+<script src="game.js"></script>
+</body>
+</html>
